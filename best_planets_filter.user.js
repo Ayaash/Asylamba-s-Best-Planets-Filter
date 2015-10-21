@@ -9,10 +9,10 @@
 // @author		Ayaash & Akulen
 // ==/UserScript==
 
-dataurl = 'http://akulen.tk/s8.json';
-popurl = 'http://akulen.tk/s8-full-population.json';
-resurl = 'http://akulen.tk/s8-full-resources.json';
-sciurl = 'http://akulen.tk/s8-full-science.json';
+dataurl = 'http://akulen.tk/s8/s8.json';
+popurl = 'http://akulen.tk/s8/s8-full-population.json';
+resurl = 'http://akulen.tk/s8/s8-full-resources.json';
+sciurl = 'http://akulen.tk/s8/s8-full-science.json';
 
 
 
