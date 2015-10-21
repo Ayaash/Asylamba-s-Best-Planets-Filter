@@ -6,13 +6,13 @@
 // @include 	http://game.asylamba.com/s8/map
 // @version     8.1
 // @grant       GM_xmlhttpRequest
-// @author	Ayaash & Akulen
+// @author		Ayaash & Akulen
 // ==/UserScript==
 
-dataurl = 'http://tomas.rigaux.com/s8.json';
-popurl = 'http://tomas.rigaux.com/s8-full-population.json';
-resurl = 'http://tomas.rigaux.com/s8-full-resources.json';
-sciurl = 'http://tomas.rigaux.com/s8-full-science.json';
+dataurl = 'http://akulen.tk/s8.json';
+popurl = 'http://akulen.tk/s8-full-population.json';
+resurl = 'http://akulen.tk/s8-full-resources.json';
+sciurl = 'http://akulen.tk/s8-full-science.json';
 
 
 
