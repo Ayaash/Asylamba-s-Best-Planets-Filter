@@ -4,10 +4,9 @@
 // @include     http://game.asylamba.com/s8/map/*
 // @include 	http://game.asylamba.com/s8/map#
 // @include 	http://game.asylamba.com/s8/map
-// @updateURL	https://github.com/Ayaash/AsylambaBestPlanetsFilter/raw/master/best_planets_filter.user.js
 // @version     8.2
 // @grant       GM_xmlhttpRequest
-// @author	Ayaash & Akulen
+// @author		Ayaash & Akulen
 // ==/UserScript==
 
 var $ = unsafeWindow.jQuery;
@@ -147,11 +146,17 @@ function preprocess()
 			method: "GET",
 			url: reservationUrl,
 			onload: function(response) {
+      	var i = true;
       	for each(var res in response.responseText.split("\n")) {
-     	    var cur = res.split(",");
-     	    if(parseInt(cur[0]) > 0) {
-     	      reservationList[parseInt(cur[0])] = [cur[1]];
-     	    }
+      	  if(i) {
+      	    i = false;
+      	  }
+      	  else {
+      	    var cur = res.split(",");
+      	    if(parseInt(cur[0]) > 0) {
+      	      reservationList[parseInt(cur[0])] = [cur[1]];
+      	    }
+      	  }
       	}
 				preprocessed += 1;
 			}
@@ -238,9 +243,8 @@ function libre(planete) {
 		return false;
 	var link = planete.querySelector('a[data-url*="placeid-"]');
 	if(link != null) {
-		var id = find(parseInt(planete.querySelector('a[data-url*="placeid-"]').getAttribute("data-url").match(/placeid\-([0-9]+)/)[1]));
-		if(reservationList[id])
-			return false;
+		var id = parseInt(planete.querySelector('a[data-url*="placeid-"]').getAttribute("data-url").match(/placeid\-([0-9]+)/)[1]);
+		return (!reservationList[id]);
 	}
 	return true;
 }
