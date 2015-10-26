@@ -4,16 +4,20 @@
 // @include     http://game.asylamba.com/s8/map/*
 // @include 	http://game.asylamba.com/s8/map#
 // @include 	http://game.asylamba.com/s8/map
-// @version     8.1
+// @version     8.2
 // @grant       GM_xmlhttpRequest
 // @author		Ayaash & Akulen
 // ==/UserScript==
 
-dataurl = 'http://akulen.tk/s8/s8.json';
-popurl = 'http://akulen.tk/s8/s8-full-population.json';
-resurl = 'http://akulen.tk/s8/s8-full-resources.json';
-sciurl = 'http://akulen.tk/s8/s8-full-science.json';
+var $ = unsafeWindow.jQuery;
 
+var dataurl = 'http://akulen.tk/s8/s8.json';
+var reservationUrl = 'https://docs.google.com/spreadsheets/d/1iovT7v5UZNy5aTGGxyfHIBab2QdPdoM2AIsUxC4Y7L0/pub?gid=1560046076&single=true&output=csv';
+var popurl = 'http://akulen.tk/s8/s8-full-population.json';
+var resurl = 'http://akulen.tk/s8/s8-full-resources.json';
+var sciurl = 'http://akulen.tk/s8/s8-full-science.json';
+var planetList;
+var reservationList = [];
 
 
 function showAll()
@@ -38,7 +42,6 @@ var populationBool = false;
 var resourceBool = false;
 var scienceBool = false;
 var preprocessed = 0;
-var $ = unsafeWindow.jQuery;
 
 function addCss(newCss)
 {
@@ -91,7 +94,7 @@ function process()
 	if(resourceBool || scienceBool || populationBool)
 	{
 		preprocess();
-		if(preprocessed != 3)
+		if(preprocessed != 5)
 			setTimeout(function() { process(); }, 1000);
 		else
 			refresh();
@@ -141,6 +144,28 @@ function preprocess()
 	{
 		GM_xmlhttpRequest({
 			method: "GET",
+			url: reservationUrl,
+			onload: function(response) {
+      	for each(var res in response.responseText.split("\n")) {
+     	    var cur = res.split(",");
+     	    if(parseInt(cur[0]) > 0) {
+     	      reservationList[parseInt(cur[0])] = [cur[1]];
+     	    }
+      	}
+				preprocessed += 1;
+			}
+		});
+		GM_xmlhttpRequest({
+			method: "GET",
+			url: dataurl,
+			onload: function(response)
+			{
+				planetList = JSON.parse(response.responseText);
+				preprocessed += 1;
+			}
+		});
+		GM_xmlhttpRequest({
+			method: "GET",
 			url: popurl,
 			onload: function(response)
 			{
@@ -181,4 +206,58 @@ function preprocess()
 	}
 }
 
+function setOpacity(relId, opa) {
+	document.getElementById("action-box").querySelector('a.openplace[data-target="' + relId + '"]').getElementsByTagName("img")[0].style.opacity = opa;
+}
+
+function find(id) {
+	var i = 0;
+	while(i < planetList.systems.length && planetList.systems[i].planetid != id) {
+		++i;
+	}
+	return i;
+}
+
+function topPlanete(planete) {
+	var link = planete.querySelector('a[data-url*="placeid-"]');
+	if(link != null) {
+		var id = find(parseInt(planete.querySelector('a[data-url*="placeid-"]').getAttribute("data-url").match(/placeid\-([0-9]+)/)[1]));
+		if(populationBool && planetList.systems[id].population == 5)
+			return true;
+		if(resourceBool && planetList.systems[id].resources == 5)
+			return true;
+		if(scienceBool && planetList.systems[id].science == 5)
+			return true;
+	}
+	return false;
+}
+
+function libre(planete) {
+	if(planete.getAttribute("class").match(/color([0-9]+)/)[1] == 12)
+		return false;
+	var link = planete.querySelector('a[data-url*="placeid-"]');
+	if(link != null) {
+		var id = find(parseInt(planete.querySelector('a[data-url*="placeid-"]').getAttribute("data-url").match(/placeid\-([0-9]+)/)[1]));
+		if(reservationList[id])
+			return false;
+	}
+	return true;
+}
+
 createIcon();
+document.getElementById("action-box").addEventListener("DOMNodeInserted", function(evt) {
+  if(populationBool || resourceBool || scienceBool) {
+		var planetes = document.getElementById("action-box").querySelectorAll('[id*=place-]');
+    var i;
+    for (i = 0; i < planetes.length; ++i) {
+			var planete = planetes[i];
+			var idRel = planete.getAttribute('id').match(/place\-([0-9]+)/)[1];
+			if(!topPlanete(planete))
+				setOpacity(idRel, 0);
+			else if(!libre(planete))
+				setOpacity(idRel, 0.25);
+			else
+				setOpacity(idRel, 1);
+		}
+	}
+}, false);
