@@ -148,7 +148,8 @@ function preprocess()
 			url: reservationUrl,
 			onload: function(response) {
       	var i = true;
-      	for each(var res in response.responseText.split("\n")) {
+      	var lines = response.responseText.split("\n");
+      	for each (var res in lines) {
       	  if(i) {
       	    i = false;
       	  }
