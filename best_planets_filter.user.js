@@ -4,9 +4,10 @@
 // @include     http://game.asylamba.com/s8/map/*
 // @include 	http://game.asylamba.com/s8/map#
 // @include 	http://game.asylamba.com/s8/map
+// @updateURL	https://github.com/Ayaash/AsylambaBestPlanetsFilter/raw/master/best_planets_filter.user.js 
 // @version     8.2
 // @grant       GM_xmlhttpRequest
-// @author		Ayaash & Akulen
+// @author	Ayaash & Akulen
 // ==/UserScript==
 
 var $ = unsafeWindow.jQuery;
